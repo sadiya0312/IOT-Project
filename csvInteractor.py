@@ -7,7 +7,7 @@ import sys
 
 #structure of csv:  {name, attendance} - also must have header of exactly {Name, Status}
 
-class csvReader:
+class csvInteractor:
     def __init__(self):
         self.attendance_list = [] # Each index in this tuple list represents 1 minute of packets to process
         self.day = time.strftime('%x')
@@ -26,3 +26,12 @@ class csvReader:
                 print(tempTuple)
                 self.attendance_list.append(tempTuple)
             f.close()
+    
+    def push(self,filename):
+        with open(filename, "w") as f:
+            f = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            for entry in self.attendance_list:
+                f.writerow(entry[0], entry[1])
+                print(entry[0], entry[1])
+            f.close()
+
