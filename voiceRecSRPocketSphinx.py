@@ -46,14 +46,14 @@ csv.pull(csvName)
 #print(csv.attendance_list) #debugging
 for tuplet in csv.attendance_list:
     name = (tuplet[0].lower(), 1.0)
-    print(name)
+    #print(name)
     nameList.append(name)
 
 for tuplet in nameList:
     attendanceDict[tuplet[0]] = "Absent"
 
-print(nameList)
-print(attendanceDict)
+#print(nameList)
+#print(attendanceDict)
 
 for iterator in nameList:
     recognizedWords += nameRecognition(mic)
@@ -62,16 +62,19 @@ hereList = recognizedWords.split(" ")
 
 for item in hereList:
     if item in attendanceDict:
-        print(item)
-        print(attendanceDict[item])
+        #print(item)
+        #print(attendanceDict[item])
         attendanceDict[item] = "Present"
 
 for key,value in attendanceDict.items():
     temp = (key,value)
     csvOutputBuilder.append(temp)
 
-print(attendanceDict)
+#print(attendanceDict) #debugging
 print(csvOutputBuilder)
+output = csvInteractor()
+output.attendance_list = csvOutputBuilder
+output.push("output.csv")
 print("finished")
 
 

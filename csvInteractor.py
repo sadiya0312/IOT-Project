@@ -28,10 +28,11 @@ class csvInteractor:
             f.close()
     
     def push(self,filename):
-        with open(filename, "w") as f:
+        with open(filename, "w", newline = '') as f:
             f = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            f.writerow(["Name","Status"])
             for entry in self.attendance_list:
-                f.writerow(entry[0], entry[1])
+                f.writerow([entry[0], entry[1]])
                 print(entry[0], entry[1])
-            f.close()
+            #f.close()
 
