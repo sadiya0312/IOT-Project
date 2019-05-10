@@ -5,77 +5,74 @@ import sys
 import time
 from csvInteractor import csvInteractor
 
-recognizedWords = ""
-attendanceDict = {}
-nameList = []
-csvOutputBuilder = []
+class voice:
+    def __init__(self):
+        self.recognizedWords = ""
+        self.attendanceDict = {}
+        self.nameList = []
+        self.csvOutputBuilder = []
 
-def nameRecognition(mic):
-    recognizedString = ""
-    with mic as source:
-        print("Say Something!")
-        audio = r.listen(source, timeout = 5, phrase_time_limit=5)
-    
-    print("Audio Clip acquired!")
+    def nameRecognition(self, r, mic):
+        recognizedString = ""
+        with mic as source:
+            print("Say Something!")
+            audio = r.listen(source, timeout = 5, phrase_time_limit=5)
+        
+        print("Audio Clip acquired!")
 
-    try:
-        print("entered try block")
-        recognizedString += r.recognize_sphinx(audio, keyword_entries=nameList)      #You can add your own command here
-        print("Recognized word was:" + recognizedString)
-    except sr.UnknownValueError:
-        print("say again")
-    except sr.RequestError as e:
-        print("Errored out.")
-        print(e)
-        pass
-    
-    return recognizedString
+        try:
+            print("entered try block")
+            recognizedString += r.recognize_sphinx(audio, keyword_entries=self.nameList)      #You can add your own command here
+            print("Recognized word was:" + recognizedString)
+        except sr.UnknownValueError:
+            print("say again")
+        except sr.RequestError as e:
+            print("Errored out.")
+            print(e)
+            pass
+        
+        return recognizedString
+    def main(self, filename):
+        # obtain audio from the microphone
+        r = sr.Recognizer()
+        mic = sr.Microphone()
 
-# obtain audio from the microphone
-r = sr.Recognizer()
-mic = sr.Microphone()
+        csvName = filename
+        csv = csvInteractor()
+        csv.pull(csvName)
+        #print(csv.attendance_list) #debugging
+        for tuplet in csv.attendance_list:
+            name = (tuplet[0].lower(), 1.0)
+            #print(name)
+            self.nameList.append(name)
 
-if not len(sys.argv) == 2:
-	print("Correct syntax is: \"py(thon3) voiceRecSRPocketSphinx.py nameOfCSV.csv\"")
-	print("Terminating...")
-	sys.exit()
+        for tuplet in self.nameList:
+            self.attendanceDict[tuplet[0]] = "Absent"
 
-csvName = sys.argv[1]
-csv = csvInteractor()
-csv.pull(csvName)
-#print(csv.attendance_list) #debugging
-for tuplet in csv.attendance_list:
-    name = (tuplet[0].lower(), 1.0)
-    #print(name)
-    nameList.append(name)
+        #print(nameList)
+        #print(attendanceDict)
 
-for tuplet in nameList:
-    attendanceDict[tuplet[0]] = "Absent"
+        for iterator in self.nameList:
+            self.recognizedWords += self.nameRecognition(r, mic)
 
-#print(nameList)
-#print(attendanceDict)
+        hereList = self.recognizedWords.split(" ")
 
-for iterator in nameList:
-    recognizedWords += nameRecognition(mic)
+        for item in hereList:
+            if item in self.attendanceDict:
+                #print(item)
+                #print(attendanceDict[item])
+                self.attendanceDict[item] = "Present"
 
-hereList = recognizedWords.split(" ")
+        for key,value in self.attendanceDict.items():
+            temp = (key,value)
+            self.csvOutputBuilder.append(temp)
 
-for item in hereList:
-    if item in attendanceDict:
-        #print(item)
-        #print(attendanceDict[item])
-        attendanceDict[item] = "Present"
-
-for key,value in attendanceDict.items():
-    temp = (key,value)
-    csvOutputBuilder.append(temp)
-
-#print(attendanceDict) #debugging
-print(csvOutputBuilder)
-output = csvInteractor()
-output.attendance_list = csvOutputBuilder
-output.push("output.csv")
-print("finished")
+        #print(attendanceDict) #debugging
+        print(self.csvOutputBuilder)
+        output = csvInteractor()
+        output.attendance_list = self.csvOutputBuilder
+        output.push("output.csv")
+        print("finished")
 
 
 
