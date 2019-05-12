@@ -4,7 +4,11 @@ This project is comprised of the voice recognition, face recognition, and moveme
 All documentation can be obtained from:
 
 http://sahmad.mypressonline.com/2019/01/21/making-of-an-iot-part-i/
+
+
 http://sahmad.mypressonline.com/2019/01/21/making-of-an-iot-part-ii/
+
+
 http://sahmad.mypressonline.com/2019/01/21/making-of-an-iot-part-iii/
 
 ```
